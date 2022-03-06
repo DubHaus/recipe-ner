@@ -10,7 +10,7 @@ RUN pip install spacy
 
 COPY . ./
 
-RUN python -m spacy train config.cfg --output ./dist --paths.train ./data/training_data.spacy --paths.dev ./data/validating_data.spacy
+RUN python prepare-data.py
 
 FROM python:3.7-slim
 
@@ -22,11 +22,10 @@ WORKDIR $APP_HOME
 RUN pip install Flask gunicorn spacy
 
 COPY --from=builder /app/model/ ./model/
-COPY --from=builder /app/stats.json ./
-COPY ./app.py ./
+COPY ./main.py ./
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
 # For environments with multiple CPU cores, increase the number of workers
 # to be equal to the cores available.
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app

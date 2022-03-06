@@ -35,7 +35,3 @@ def prepare_data(data, output):
     db.add(doc)
 
     db.to_disk(output)  # save the docbin object
-
-
-if __name__ == "__main__":
-    main()
